@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gait App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles2.css') }}">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <h4>Gait Classification</h4>
+        </div>
+        <ul class="nav-links">
+            <li><a id="home" onmouseover="over3()" onmouseout="out3()" href="/template/index">Home</a></li>
+            <li><a id="about" onmouseover="over4()" onmouseout="out4()" href="#">About</a></li>
+            <li><a id="contact" onmouseover="over5()" onmouseout="out5()" href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <div id="particles-js3">
+        <title>GEIs</title>
+        <div class="upload-btn-wrapper" onmouseover="over6()" onmouseout="out6()">
+            <button id="upload" class="btn">Upload</button>
+            <input id="image-selector" type="file" name="myfile" />
+        </div>
+        <div class="upload-btn-wrapper2">
+            <button id="predict-button" onmouseover="over7()" onmouseout="out7()">Predict</button>
+        </div>
+        <p id="pred">Predictions</p>
+        <p>Diplegic: <span id="diplegic-prediction"></span></p>
+        <p>Hemiplegic: <span id="hemiplegic-prediction"></span></p>
+        <p>Neuropathic: <span id="neurophatic-prediction"></span></p>
+        <p>Normal: <span id="normal-prediction"></span></p>
+        <p>Parkinsonian: <span id="parkinsonian-prediction"></span></p>
+        <img id="selected-image" src="" />
+    </div>
+    <div id="particles-js4">
+        <title>GEIs</title>
+        <div class="upload-btn-wrapper3" onmouseover="over8()" onmouseout="out8()">
+            <button id="upload2" class="btn">Upload</button>
+            <input id="image-selector2" type="file" name="myfile" />
+        </div>
+        <div class="upload-btn-wrapper4">
+            <button id="predict-button2" onmouseover="over9()" onmouseout="out9()">Predict</button>
+        </div>
+        <p id="pred2">Predictions</p>
+        <p>Diplegic: <span id="diplegic-prediction2"></span></p>
+        <p>Hemiplegic: <span id="hemiplegic-prediction2"></span></p>
+        <p>Neuropathic: <span id="neurophatic-prediction2"></span></p>
+        <p>Normal: <span id="normal-prediction2"></span></p>
+        <p>Parkinsonian: <span id="parkinsonian-prediction2"></span></p>
+        <img id="selected-image2" src="" />
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        let base64Image;
+        $("#image-selector").change(function() {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let dataURL = reader.result;
+                $('#selected-image').attr("src", dataURL);
+                base64Image = dataURL.replace("data:image/png;base64,", "");
+                console.log(base64Image);
+            }
+            reader.readAsDataURL($("#image-selector")[0].files[0]);
+            $("#diplegic-prediction").text("");
+            $("#hemiplegic-prediction").text("");
+            $("#neurophatic-prediction").text("");
+            $("#normal-prediction").text("");
+            $("#parkinsonian-prediction").text("");
+        });
+
+        $("#predict-button").click(function() {
+            let message = {
+                image: base64Image
+            }
+            console.log(message);
+            $.post("http://127.0.0.1:5000/template/predict", JSON.stringify(message), function(response) {
+                $("#diplegic-prediction").text(response.prediction.diplegic.toFixed(3));
+                $("#hemiplegic-prediction").text(response.prediction.hemiplegic.toFixed(3));
+                $("#neurophatic-prediction").text(response.prediction.neuropathic.toFixed(3));
+                $("#normal-prediction").text(response.prediction.normal.toFixed(3));
+                $("#parkinsonian-prediction").text(response.prediction.parkinsonian.toFixed(3));
+                console.log(response);
+            });
+        });
+    </script>
+
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        let base64Image2;
+        $("#image-selector2").change(function() {
+            let reader2 = new FileReader();
+            reader2.onload = function(e) {
+                let dataURL = reader2.result;
+                $('#selected-image2').attr("src", dataURL);
+                base64Image2 = dataURL.replace("data:image/png;base64,", "");
+                console.log(base64Image2);
+            }
+            reader2.readAsDataURL($("#image-selector2")[0].files[0]);
+            $("#diplegic-prediction2").text("");
+            $("#hemiplegic-prediction2").text("");
+            $("#neurophatic-prediction2").text("");
+            $("#normal-prediction2").text("");
+            $("#parkinsonian-prediction2").text("");
+        });
+
+        $("#predict-button2").click(function() {
+            let message2 = {
+                image: base64Image2
+            }
+            console.log(message2);
+            $.post("http://127.0.0.1:5000/template/predict2", JSON.stringify(message2), function(response) {
+                $("#diplegic-prediction2").text(response.prediction.diplegic.toFixed(3));
+                $("#hemiplegic-prediction2").text(response.prediction.hemiplegic.toFixed(3));
+                $("#neurophatic-prediction2").text(response.prediction.neuropathic.toFixed(3));
+                $("#normal-prediction2").text(response.prediction.normal.toFixed(3));
+                $("#parkinsonian-prediction2").text(response.prediction.parkinsonian.toFixed(3));
+                console.log(response);
+            });
+        });
+    </script>
+
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/app2.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app3.js') }}"></script>
+</body>
+
+</html>>
