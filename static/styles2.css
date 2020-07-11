@@ -175,3 +175,37 @@ nav {
     display: inline-block;
     background: none;
 }
+
+.upload-btn-feature {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    background: none;
+}
+
+.upload-btn-feature2 {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    background: none;
+}
+
+#feature-map {
+    border: 2px solid gray;
+    color: gray;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    background: none;
+}
+
+#feature-map2 {
+    border: 2px solid gray;
+    color: gray;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    background: none;
+}

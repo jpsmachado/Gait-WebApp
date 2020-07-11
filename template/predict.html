@@ -33,6 +33,20 @@
         <p>Normal: <span id="normal-prediction"></span></p>
         <p>Parkinsonian: <span id="parkinsonian-prediction"></span></p>
         <img id="selected-image" src="" />
+        <div>
+            <form action="#">
+                <p>Layer:</p>
+                <p><input type="text" id="layers"></p>
+                <p>Channel:</p>
+                <p><input type="text" id="channels"></p>
+            </form>
+        </div>
+        <div class="upload-btn-feature">
+            <button id="feature-map" onmouseover="over10()" onmouseout="out10()">Feature Map</button>
+        </div>
+        <div>
+            <img id="feature-image" src="" />
+        </div>
     </div>
     <div id="particles-js4">
         <title>GEIs</title>
@@ -50,6 +64,20 @@
         <p>Normal: <span id="normal-prediction2"></span></p>
         <p>Parkinsonian: <span id="parkinsonian-prediction2"></span></p>
         <img id="selected-image2" src="" />
+        <div>
+            <form action="#">
+                <p>Layer:</p>
+                <p><input type="text" id="layers2"></p>
+                <p>Channel:</p>
+                <p><input type="text" id="channels2"></p>
+            </form>
+        </div>
+        <div class="upload-btn-feature2">
+            <button id="feature-map2" onmouseover="over11()" onmouseout="out11()">Feature Map</button>
+        </div>
+        <div>
+            <img id="feature-image2" src="" />
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
@@ -58,6 +86,7 @@
             let reader = new FileReader();
             reader.onload = function(e) {
                 let dataURL = reader.result;
+                console.log(dataURL)
                 $('#selected-image').attr("src", dataURL);
                 base64Image = dataURL.replace("data:image/png;base64,", "");
                 console.log(base64Image);
@@ -82,6 +111,22 @@
                 $("#normal-prediction").text(response.prediction.normal.toFixed(3));
                 $("#parkinsonian-prediction").text(response.prediction.parkinsonian.toFixed(3));
                 console.log(response);
+            });
+        });
+
+        $("#feature-map").click(function() {
+            var layers = $('#layers').val();
+            var channels = $('#channels').val();
+            console.log(layers)
+            console.log(channels)
+            let message = {
+                image: base64Image,
+                lay: layers,
+                chan: channels
+            }
+            $.post("http://127.0.0.1:5000/template/feature", JSON.stringify(message), function(response) {
+                $("#feature-image").attr("src", "data:image/png;base64," + response.feature);
+                console.log(response)
             });
         });
     </script>
@@ -119,6 +164,21 @@
                 $("#normal-prediction2").text(response.prediction.normal.toFixed(3));
                 $("#parkinsonian-prediction2").text(response.prediction.parkinsonian.toFixed(3));
                 console.log(response);
+            });
+        });
+        $("#feature-map2").click(function() {
+            var layers = $('#layers2').val();
+            var channels = $('#channels2').val();
+            console.log(layers)
+            console.log(channels)
+            let message = {
+                image: base64Image2,
+                lay: layers,
+                chan: channels
+            }
+            $.post("http://127.0.0.1:5000/template/feature2", JSON.stringify(message), function(response) {
+                $("#feature-image2").attr("src", "data:image/png;base64," + response.feature);
+                console.log(response)
             });
         });
     </script>

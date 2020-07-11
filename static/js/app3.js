@@ -5,6 +5,8 @@ var upload = window.document.getElementById("upload");
 var predict = window.document.getElementById("predict-button");
 var upload2 = window.document.getElementById("upload2");
 var predict2 = window.document.getElementById("predict-button2");
+var feature1 = window.document.getElementById("feature-map");
+var feature2 = window.document.getElementById("feature-map2");
 
 
 function over3() {
@@ -61,6 +63,16 @@ function over9() {
     predict2.style.color = 'black';
 }
 
+function over10() {
+    feature1.style.background = 'grey';
+    feature1.style.color = 'black';
+}
+
+function over11() {
+    feature2.style.background = 'grey';
+    feature2.style.color = 'black';
+}
+
 function out8() {
     upload2.style.background = 'white';
     upload2.style.color = 'grey';
@@ -69,4 +81,14 @@ function out8() {
 function out9() {
     predict2.style.background = 'white';
     predict2.style.color = 'grey';
+}
+
+function out10() {
+    feature1.style.background = 'white';
+    feature1.style.color = 'grey';
+}
+
+function out11() {
+    feature2.style.background = 'white';
+    feature2.style.color = 'grey';
 }
