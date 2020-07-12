@@ -10,6 +10,7 @@ from keras import backend as K
 from keras.models import Sequential
 from keras.models import load_model
 from tensorflow.keras.models import Model
+from keras.preprocessing import image
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
 from flask import request
@@ -21,6 +22,12 @@ from keras.utils import CustomObjectScope
 from keras.initializers import glorot_uniform
 import numpy as np
 import matplotlib.pyplot as plt
+from tf_keras_vis.saliency import Saliency
+from tf_keras_vis.utils import normalize
+from matplotlib import cm
+import matplotlib.cm
+from tf_keras_vis.gradcam import Gradcam
+from tensorflow.keras.applications.vgg19 import preprocess_input
 
 app = Flask(__name__, static_url_path='', static_folder='static', template_folder='template')
 cors = CORS(app, resources={r"/foo": {"origins": "http://localhost:port"}})
@@ -38,6 +45,12 @@ def get_model2():
         model2 = tf.keras.models.load_model('SEI_finalModel.h5')
     print(" * Model SEI loaded!")
 
+def loss(output):
+    return (output[0][1])
+
+def model_modifier(m):
+    m.layers[-1].activation = tf.keras.activations.linear
+    return m
 
 def preprocess_image(image, target_size):
     if image.mode != "RGB":
@@ -189,6 +202,135 @@ def featureExtraction2():
 
         print(response)
         return jsonify(response)
+    else:
+        return render_template('predict.html')
+
+
+@app.route('/template/saliency', methods=['POST', 'GET'])
+def saliency():
+    if request.method == 'POST':
+        message = request.get_json(force=True)
+        print(message)
+        encoded = message['image']
+        decoded = base64.b64decode(encoded)
+        image = Image.open(io.BytesIO(decoded))
+        processed_image = preprocess_image(image, target_size=(224, 224))
+        
+        saliency = Saliency(model,
+                    model_modifier=model_modifier,
+                    clone=False)
+        saliency_map = saliency(loss, processed_image)
+        saliency_map = normalize(saliency_map)
+
+        plt.imsave("saliency.png", saliency_map[0], cmap='jet')
+
+        imageresp = open("saliency.png", "rb").read()
+        imageresp = base64.b64encode(imageresp)
+        print(str(imageresp))
+        response = {
+           "saliency": imageresp.decode('utf-8')
+        }
+
+        print(response)
+        return jsonify(response)
+    else:
+        return render_template('predict.html')
+
+
+@app.route('/template/saliency2', methods=['POST', 'GET'])
+def saliency2():
+    if request.method == 'POST':
+        message = request.get_json(force=True)
+        print(message)
+        encoded = message['image']
+        decoded = base64.b64decode(encoded)
+        image = Image.open(io.BytesIO(decoded))
+        processed_image = preprocess_image(image, target_size=(224, 224))
+        
+        saliency = Saliency(model,
+                    model_modifier=model_modifier,
+                    clone=False)
+        saliency_map = saliency(loss, processed_image)
+        saliency_map = normalize(saliency_map)
+
+        plt.imsave("saliency.png", saliency_map[0], cmap='jet')
+
+        imageresp = open("saliency.png", "rb").read()
+        imageresp = base64.b64encode(imageresp)
+        print(str(imageresp))
+        response = {
+           "saliency": imageresp.decode('utf-8')
+        }
+
+        print(response)
+        return jsonify(response)
+    else:
+        return render_template('predict.html')
+
+
+
+@app.route('/template/grad', methods=['POST', 'GET'])
+def grad():
+    if request.method == 'POST':
+        message = request.get_json(force=True)
+        print(message)
+        encoded = message['image']
+        decoded = base64.b64decode(encoded)
+        image = Image.open(io.BytesIO(decoded))
+        processed_image = preprocess_image(image, target_size=(224, 224))
+        gradcam = Gradcam(model,
+                  model_modifier=model_modifier,
+                  clone=False)
+        cam = gradcam(loss, processed_image, penultimate_layer=-1)#, model.layers number)
+        cam = normalize(cam)
+        cmap = cm.get_cmap("jet")
+        heatmap = np.uint8(cmap(cam[0])[..., :5] * 255)
+        plt.imsave("grad.png", heatmap, cmap='jet')
+
+        imageresp = open("grad.png", "rb").read()
+        imageresp = base64.b64encode(imageresp)
+        print(str(imageresp))
+        response = {
+           "grad": imageresp.decode('utf-8')
+        }
+
+        print(response)
+        return jsonify(response)
+
+
+    else:
+        return render_template('predict.html')
+
+
+@app.route('/template/grad2', methods=['POST', 'GET'])
+def grad2():
+    if request.method == 'POST':
+        message = request.get_json(force=True)
+        print(message)
+        encoded = message['image']
+        decoded = base64.b64decode(encoded)
+        image = Image.open(io.BytesIO(decoded))
+        processed_image = preprocess_image(image, target_size=(224, 224))
+        gradcam = Gradcam(model,
+                  model_modifier=model_modifier,
+                  clone=False)
+        cam = gradcam(loss, processed_image, penultimate_layer=-1)#, model.layers number)
+        cam = normalize(cam)
+        cmap = cm.get_cmap("jet")
+        heatmap = np.uint8(cmap(cam[0])[..., :5] * 255)
+        plt.imsave("grad.png", heatmap, cmap='jet')
+
+        imageresp = open("grad.png", "rb").read()
+        imageresp = base64.b64encode(imageresp)
+        print(str(imageresp))
+        response = {
+           "grad": imageresp.decode('utf-8')
+        }
+
+        print(response)
+        return jsonify(response)
+
+
     else:
         return render_template('predict.html')
 

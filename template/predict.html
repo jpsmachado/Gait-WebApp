@@ -35,10 +35,8 @@
         <img id="selected-image" src="" />
         <div>
             <form action="#">
-                <p>Layer:</p>
-                <p><input type="text" id="layers"></p>
-                <p>Channel:</p>
-                <p><input type="text" id="channels"></p>
+                <p><input type="text" id="layers" placeholder="Layer"></p>
+                <p><input type="text" id="channels" placeholder="Channel"></p>
             </form>
         </div>
         <div class="upload-btn-feature">
@@ -46,6 +44,18 @@
         </div>
         <div>
             <img id="feature-image" src="" />
+        </div>
+        <div class="upload-btn-saliency">
+            <button id="saliency-map" onmouseover="over12()" onmouseout="out12()">Saliency Map</button>
+        </div>
+        <div>
+            <img id="saliency-image" src="" />
+        </div>
+        <div class="upload-btn-grad">
+            <button id="grad" onmouseover="over13()" onmouseout="out13()">GradCAM</button>
+        </div>
+        <div>
+            <img id="grad-image" src="" />
         </div>
     </div>
     <div id="particles-js4">
@@ -66,10 +76,8 @@
         <img id="selected-image2" src="" />
         <div>
             <form action="#">
-                <p>Layer:</p>
-                <p><input type="text" id="layers2"></p>
-                <p>Channel:</p>
-                <p><input type="text" id="channels2"></p>
+                <p><input type="text" id="layers2" placeholder="Layer"></p>
+                <p><input type="text" id="channels2" placeholder="Channel"></p>
             </form>
         </div>
         <div class="upload-btn-feature2">
@@ -77,6 +85,18 @@
         </div>
         <div>
             <img id="feature-image2" src="" />
+        </div>
+        <div class="upload-btn-saliency2">
+            <button id="saliency-map2" onmouseover="over14()" onmouseout="out14()">Saliency Map</button>
+        </div>
+        <div>
+            <img id="saliency-image2" src="" />
+        </div>
+        <div class="upload-btn-grad2">
+            <button id="grad2" onmouseover="over15()" onmouseout="out15()">GradCAM</button>
+        </div>
+        <div>
+            <img id="grad-image2" src="" />
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -129,6 +149,24 @@
                 console.log(response)
             });
         });
+        $("#saliency-map").click(function() {
+            let message3 = {
+                image: base64Image
+            }
+            $.post("http://127.0.0.1:5000/template/saliency", JSON.stringify(message3), function(response) {
+                $("#saliency-image").attr("src", "data:image/png;base64," + response.saliency);
+                console.log(response)
+            });
+        });
+        $("#grad").click(function() {
+            let message4 = {
+                image: base64Image
+            }
+            $.post("http://127.0.0.1:5000/template/grad", JSON.stringify(message4), function(response) {
+                $("#grad-image").attr("src", "data:image/png;base64," + response.grad);
+                console.log(response)
+            });
+        });
     </script>
 
     <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -178,6 +216,24 @@
             }
             $.post("http://127.0.0.1:5000/template/feature2", JSON.stringify(message), function(response) {
                 $("#feature-image2").attr("src", "data:image/png;base64," + response.feature);
+                console.log(response)
+            });
+        });
+        $("#saliency-map2").click(function() {
+            let message5 = {
+                image: base64Image2
+            }
+            $.post("http://127.0.0.1:5000/template/saliency2", JSON.stringify(message5), function(response) {
+                $("#saliency-image2").attr("src", "data:image/png;base64," + response.saliency);
+                console.log(response)
+            });
+        });
+        $("#grad2").click(function() {
+            let message6 = {
+                image: base64Image2
+            }
+            $.post("http://127.0.0.1:5000/template/grad2", JSON.stringify(message6), function(response) {
+                $("#grad-image2").attr("src", "data:image/png;base64," + response.grad);
                 console.log(response)
             });
         });

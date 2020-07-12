@@ -190,6 +190,34 @@ nav {
     background: none;
 }
 
+.upload-btn-saliency {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    background: none;
+}
+
+.upload-btn-saliency2 {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    background: none;
+}
+
+.upload-btn-grad {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    background: none;
+}
+
+.upload-btn-grad2 {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    background: none;
+}
+
 #feature-map {
     border: 2px solid gray;
     color: gray;
@@ -201,6 +229,46 @@ nav {
 }
 
 #feature-map2 {
+    border: 2px solid gray;
+    color: gray;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    background: none;
+}
+
+#saliency-map {
+    border: 2px solid gray;
+    color: gray;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    background: none;
+}
+
+#saliency-map2 {
+    border: 2px solid gray;
+    color: gray;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    background: none;
+}
+
+#grad {
+    border: 2px solid gray;
+    color: gray;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    background: none;
+}
+
+#grad2 {
     border: 2px solid gray;
     color: gray;
     padding: 8px 20px;
