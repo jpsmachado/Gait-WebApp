@@ -25,7 +25,6 @@ import matplotlib.pyplot as plt
 from tf_keras_vis.saliency import Saliency
 from tf_keras_vis.utils import normalize
 from matplotlib import cm
-import matplotlib.cm
 from tf_keras_vis.gradcam import Gradcam
 from tensorflow.keras.applications.vgg19 import preprocess_input
 
@@ -45,8 +44,11 @@ def get_model2():
         model2 = tf.keras.models.load_model('SEI_finalModel.h5')
     print(" * Model SEI loaded!")
 
-def loss(output):
-    return (output[0][1])
+def lossGEI(output):
+    return (output[0][geiclass])
+
+def lossSEI(output):
+    return (output[0][seiclass])
 
 def model_modifier(m):
     m.layers[-1].activation = tf.keras.activations.linear
@@ -77,13 +79,16 @@ def predict():
         decoded = base64.b64decode(encoded)
         image = Image.open(io.BytesIO(decoded))
         processed_image = preprocess_image(image, target_size=(224, 224))
-    
+
         prediction = model.predict(processed_image).tolist()
         print(prediction[0][0])
         print(prediction[0][1])
         print(prediction[0][2])
         print(prediction[0][3])
         print(prediction[0][4])
+
+        global geiclass
+        geiclass = np.argmax(prediction[0])
 
         response = {
             "prediction": {
@@ -117,6 +122,9 @@ def predict2():
         print(prediction[0][2])
         print(prediction[0][3])
         print(prediction[0][4])
+        
+        global seiclass
+        seiclass = np.argmax(prediction[0])
 
         response = {
             "prediction": {
@@ -152,9 +160,8 @@ def featureExtraction():
         print(layers)
         channels = message['chan']
         print(channels)
-        print("decodeeeee")
         print("Numero de layers:"+str(len(model.layers)))
-        layer_outputs = [layer.output for layer in model.layers[:8]]
+        layer_outputs = [layer.output for layer in model.layers[:21]]
         activation_model = Model(inputs=model.input, outputs=layer_outputs)
         activations = activation_model.predict(processed_image)
         first_layer_activation = activations[int(layers)]
@@ -187,7 +194,7 @@ def featureExtraction2():
         print(channels)
         print("decodeeeee")
         print("Numero de layers:"+str(len(model.layers)))
-        layer_outputs = [layer.output for layer in model.layers[:8]]
+        layer_outputs = [layer.output for layer in model.layers[:21]]
         activation_model = Model(inputs=model.input, outputs=layer_outputs)
         activations = activation_model.predict(processed_image)
         first_layer_activation = activations[int(layers)]
@@ -219,7 +226,7 @@ def saliency():
         saliency = Saliency(model,
                     model_modifier=model_modifier,
                     clone=False)
-        saliency_map = saliency(loss, processed_image)
+        saliency_map = saliency(lossGEI, processed_image)
         saliency_map = normalize(saliency_map)
 
         plt.imsave("saliency.png", saliency_map[0], cmap='jet')
@@ -250,7 +257,7 @@ def saliency2():
         saliency = Saliency(model,
                     model_modifier=model_modifier,
                     clone=False)
-        saliency_map = saliency(loss, processed_image)
+        saliency_map = saliency(lossSEI, processed_image)
         saliency_map = normalize(saliency_map)
 
         plt.imsave("saliency.png", saliency_map[0], cmap='jet')
@@ -281,10 +288,11 @@ def grad():
         gradcam = Gradcam(model,
                   model_modifier=model_modifier,
                   clone=False)
-        cam = gradcam(loss, processed_image, penultimate_layer=-1)#, model.layers number)
+        cam = gradcam(lossGEI, processed_image, penultimate_layer=-1)#, model.layers number)
         cam = normalize(cam)
         cmap = cm.get_cmap("jet")
         heatmap = np.uint8(cmap(cam[0])[..., :5] * 255)
+        plt.imshow(heatmap, cmap='jet')
         plt.imsave("grad.png", heatmap, cmap='jet')
 
         imageresp = open("grad.png", "rb").read()
@@ -314,7 +322,7 @@ def grad2():
         gradcam = Gradcam(model,
                   model_modifier=model_modifier,
                   clone=False)
-        cam = gradcam(loss, processed_image, penultimate_layer=-1)#, model.layers number)
+        cam = gradcam(lossSEI, processed_image, penultimate_layer=-1)#, model.layers number)
         cam = normalize(cam)
         cmap = cm.get_cmap("jet")
         heatmap = np.uint8(cmap(cam[0])[..., :5] * 255)
