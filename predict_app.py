@@ -292,7 +292,6 @@ def grad():
         cam = normalize(cam)
         cmap = cm.get_cmap("jet")
         heatmap = np.uint8(cmap(cam[0])[..., :5] * 255)
-        plt.imshow(heatmap, cmap='jet')
         plt.imsave("grad.png", heatmap, cmap='jet')
 
         imageresp = open("grad.png", "rb").read()
