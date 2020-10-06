@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Gait Pathology Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <h4>Gait Pathology Classification</h4>
+        </div>
+        <ul class="nav-links">
+            <li><a id="home" onmouseover="over3()" onmouseout="out3()" href="/template/index">Home</a></li>
+            <li><a id="about" onmouseover="over4()" onmouseout="out4()" href="#">About</a></li>
+            <li><a id="contact" onmouseover="over5()" onmouseout="out5()" href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <div id="particles-js">
+        <div>
+            <button id="bt1" class="button1" onmouseover="over()" onmouseout="out()" onclick="window.location.href='/template/predict3'">Video</button>
+        </div>
+        <div id="option">
+            <button id="spec" onmouseover="overspec()" onmouseout="outspec()" onclick="window.location.href='/template/predict'">Gait Representations</button>
+        </div>
+    </div>
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app3.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app6.js') }}"></script>
+
+</body>
+
+</html>

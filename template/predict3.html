@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gait App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles2.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <h4>Gait Classification</h4>
+        </div>
+        <ul class="nav-links">
+            <li><a id="home" onmouseover="over3()" onmouseout="out3()" href="/template/index">Home</a></li>
+            <li><a id="about" onmouseover="over4()" onmouseout="out4()" href="#">About</a></li>
+            <li><a id="contact" onmouseover="over5()" onmouseout="out5()" href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <div id="particles-js5">
+        <div id="particles">
+            <title>GEIs</title>
+
+            <div class="upload-btn-wrapper" onmouseover="over6()" onmouseout="out6()">
+                <button id="upload" class="btn">Upload a Video</button>
+                <input id="image-selector" type="file" name="myfile" />
+            </div>
+            <div class="upload-btn-generate">
+                <button id="generate-button" onmouseover="over18()" onmouseout="out18()">Get GEI</button>
+            </div>
+            <div class="upload-btn-wrapper2">
+                <button id="predict-button" onmouseover="over7()" onmouseout="out7()">Predict</button>
+            </div>
+            <p id="pred">Predictions</p>
+            <p>Diplegic: <span id="diplegic-prediction"></span></p>
+            <p>Hemiplegic: <span id="hemiplegic-prediction"></span></p>
+            <p>Neuropathic: <span id="neurophatic-prediction"></span></p>
+            <p>Normal: <span id="normal-prediction"></span></p>
+            <p>Parkinsonian: <span id="parkinsonian-prediction"></span></p>
+            <div>
+                <img id="selected-image" src="" />
+            </div>
+            <div class="upload-btn-saliency">
+                <button id="saliency-map" onmouseover="over12()" onmouseout="out12()">Saliency Map</button>
+            </div>
+            <div>
+                <a href="{{ url_for('static', filename='/imgs/saliency.png') }}" download>
+                    <img id="saliency-image" src="" />
+                </a>
+            </div>
+            <div class="upload-btn-grad">
+                <button id="grad" onmouseover="over13()" onmouseout="out13()">Heatmap</button>
+            </div>
+            <div>
+                <a href="{{ url_for('static', filename='/imgs/grad.png') }}" download>
+                    <img id="grad-image" src="" />
+                </a>
+                <div>
+                    <form action="#">
+                        <p><input type="text" id="name" placeholder="Name"></p>
+                        <p><input type="text" id="pemail" placeholder="Email"></p>
+                    </form>
+                </div>
+            </div>
+            <div class="email">
+                <button id="sendEmail" onmouseover="over16()" onmouseout="out16()">Send Email</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        let base64Image;
+        $("#image-selector").change(function() {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let dataURL = reader.result;
+                console.log(dataURL)
+                $('#selected-image').attr("src", dataURL);
+                base64Image = dataURL.replace("data:video/mp4;base64,", "");
+                console.log(base64Image);
+            }
+            reader.readAsDataURL($("#image-selector")[0].files[0]);
+            $("#diplegic-prediction").text("");
+            $("#hemiplegic-prediction").text("");
+            $("#neurophatic-prediction").text("");
+            $("#normal-prediction").text("");
+            $("#parkinsonian-prediction").text("");
+        });
+
+        $("#predict-button").click(function() {
+            let message = {
+                image: base64Image
+            }
+            console.log(message);
+            $.post("http://127.0.0.1:5000/template/predict", JSON.stringify(message), function(response) {
+                $("#diplegic-prediction").text(response.prediction.diplegic.toFixed(3));
+                $("#hemiplegic-prediction").text(response.prediction.hemiplegic.toFixed(3));
+                $("#neurophatic-prediction").text(response.prediction.neuropathic.toFixed(3));
+                $("#normal-prediction").text(response.prediction.normal.toFixed(3));
+                $("#parkinsonian-prediction").text(response.prediction.parkinsonian.toFixed(3));
+                console.log(response);
+            });
+        });
+
+        $("#feature-map").click(function() {
+            var layers = $('#layers').val();
+            var channels = $('#channels').val();
+            console.log(layers)
+            console.log(channels)
+            let message = {
+                image: base64Image,
+                lay: layers,
+                chan: channels
+            }
+            $.post("http://127.0.0.1:5000/template/feature", JSON.stringify(message), function(response) {
+                $("#feature-image").attr("src", "data:image/png;base64," + response.feature);
+                console.log(response)
+            });
+        });
+        $("#saliency-map").click(function() {
+            let message3 = {
+                image: base64Image
+            }
+            $.post("http://127.0.0.1:5000/template/saliency", JSON.stringify(message3), function(response) {
+                $("#saliency-image").attr("src", "data:image/png;base64," + response.saliency);
+                console.log(response)
+            });
+        });
+        $("#grad").click(function() {
+            let message4 = {
+                image: base64Image
+            }
+            $.post("http://127.0.0.1:5000/template/grad", JSON.stringify(message4), function(response) {
+                $("#grad-image").attr("src", "data:image/png;base64," + response.grad);
+                console.log(response)
+            });
+        });
+        $("#sendEmail").click(function() {
+            var diplegic = $('#diplegic-prediction').text();
+            var hemiplegic = $('#hemiplegic-prediction').text();
+            var normal = $('#normal-prediction').text();
+            var neuropathic = $('#neurophatic-prediction').text();
+            var parkinsonian = $('#parkinsonian-prediction').text();
+            var name = $('#name').val();
+            var email = $('#pemail').val();
+
+            console.log('diplegic: ' + diplegic)
+            console.log('hemiplegic: ' + hemiplegic)
+            console.log('normal: ' + normal)
+            console.log('neuropathic: ' + neuropathic)
+            console.log('parkinsonian: ' + parkinsonian)
+            console.log('name: ' + name)
+            console.log('mail: ' + email)
+
+            let messageMail = {
+                dip: diplegic,
+                hemi: hemiplegic,
+                neuro: neuropathic,
+                nor: normal,
+                park: parkinsonian,
+                nam: name,
+                pema: email
+            }
+
+            $.post("http://127.0.0.1:5000/template/email2", JSON.stringify(messageMail), function(response) {
+                console.log(response)
+            });
+        });
+        $("#generate-button").click(function() {
+
+            let message = {
+                image: base64Image,
+            }
+            $.post("http://127.0.0.1:5000/template/predict3", JSON.stringify(message), function(response) {
+                $("#selected-image").attr("src", "data:image/png;base64," + response.GEI);
+                console.log(response)
+                base64Image = response.GEI;
+            });
+        });
+    </script>
+
+
+
+
+    <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app3.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app4.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app5.js') }}"></script>
+</body>
+
+</html>
